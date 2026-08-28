@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import api from "../api/axios.js";
 import Alert from "../components/Alert.jsx";
 
-const TABS = ["My Schedule", "Availability"];
+const TABS = ["My Schedule", "Availability", "My Profile"];
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export default function DoctorDashboard() {
@@ -21,6 +21,7 @@ export default function DoctorDashboard() {
       <div className="tab-content">
         {tab === "My Schedule" && <Schedule />}
         {tab === "Availability" && <Availability />}
+        {tab === "My Profile" && <MyProfile />}
       </div>
     </div>
   );
@@ -256,6 +257,74 @@ function Availability() {
 
         <button className="btn btn-primary" type="submit" style={{ marginTop: "1rem" }}>
           Save Availability
+        </button>
+      </form>
+    </div>
+  );
+}
+
+function MyProfile() {
+  const [doctor, setDoctor] = useState(null);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    api.get("/doctors/me/profile").then((res) => setDoctor(res.data));
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setMessage("");
+    try {
+      await api.put("/auth/me", {
+        name: doctor.user.name,
+        phone: doctor.user.phone,
+      });
+      await api.put("/doctors/me/availability", {
+        qualifications: doctor.qualifications,
+      });
+      setMessage("Profile updated.");
+    } catch (err) {
+      setError(err.response?.data?.message || "Could not update profile.");
+    }
+  };
+
+  if (!doctor) return <div className="card">Loading...</div>;
+
+  return (
+    <div className="card">
+      <h3>My Profile</h3>
+      <Alert message={error} />
+      <Alert type="success" message={message} />
+      <form onSubmit={handleSubmit} className="form-grid">
+        <div>
+          <label>Full Name</label>
+          <input
+            value={doctor.user?.name || ""}
+            onChange={(e) => setDoctor({ ...doctor, user: { ...doctor.user, name: e.target.value } })}
+          />
+        </div>
+        <div>
+          <label>Email</label>
+          <input value={doctor.user?.email || ""} disabled />
+        </div>
+        <div>
+          <label>Phone</label>
+          <input
+            value={doctor.user?.phone || ""}
+            onChange={(e) => setDoctor({ ...doctor, user: { ...doctor.user, phone: e.target.value } })}
+          />
+        </div>
+        <div>
+          <label>Qualifications</label>
+          <input
+            value={doctor.qualifications || ""}
+            onChange={(e) => setDoctor({ ...doctor, qualifications: e.target.value })}
+          />
+        </div>
+        <button className="btn btn-primary span-2" type="submit">
+          Save Profile
         </button>
       </form>
     </div>

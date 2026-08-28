@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import api from "../api/axios.js";
 import Alert from "../components/Alert.jsx";
+import DoctorsBrowse from "./DoctorsBrowse.jsx";
 
-const TABS = ["Book Appointment", "My Appointments", "Medical Records", "Invoices", "Profile"];
+const TABS = ["Browse Doctors", "Book Appointment", "My Appointments", "Medical Records", "Invoices", "Profile"];
 
 export default function PatientDashboard() {
   const [tab, setTab] = useState(TABS[0]);
@@ -18,6 +19,7 @@ export default function PatientDashboard() {
         ))}
       </div>
       <div className="tab-content">
+        {tab === "Browse Doctors" && <DoctorsBrowse />}
         {tab === "Book Appointment" && <BookAppointment />}
         {tab === "My Appointments" && <MyAppointments />}
         {tab === "Medical Records" && <MedicalRecords />}
@@ -254,6 +256,8 @@ function Invoices() {
     }
   };
 
+  const statusLabel = (status) => (status === "pending_confirmation" ? "Awaiting Confirmation" : status);
+
   return (
     <div className="card">
       <h3>Invoices</h3>
@@ -275,13 +279,18 @@ function Invoices() {
               <td>{inv.doctor?.user?.name}</td>
               <td>৳{inv.amount}</td>
               <td>
-                <span className={`badge badge-${inv.status}`}>{inv.status}</span>
+                <span className={`badge badge-${inv.status}`}>{statusLabel(inv.status)}</span>
               </td>
               <td>
                 {inv.status === "unpaid" && (
                   <button className="btn-link" onClick={() => pay(inv._id)}>
-                    Mark as Paid
+                    Pay Now
                   </button>
+                )}
+                {inv.status === "pending_confirmation" && (
+                  <span style={{ fontSize: "0.8rem", color: "var(--muted)" }}>
+                    Waiting for admin to confirm
+                  </span>
                 )}
               </td>
             </tr>

@@ -22,7 +22,7 @@ export default function Home() {
 
       <img
         className="hero-banner"
-        src="https://picsum.photos/seed/shms-main-hospital/900/400"
+        src="https://commons.wikimedia.org/wiki/Special:FilePath/Abington_Hospital_emergency_room_entrance.jpeg"
         alt="Hospital building"
       />
 
@@ -59,27 +59,45 @@ export default function Home() {
       <h2 className="section-title">Our Departments</h2>
       <div className="dept-grid">
         <div className="dept-card">
-          <img src="https://picsum.photos/seed/shms-cardiology/400/250" alt="Cardiology" />
+          <img
+            src="https://commons.wikimedia.org/wiki/Special:FilePath/Wireless_ECG_Monitor.jpg"
+            alt="Cardiology"
+          />
           <h4>Cardiology</h4>
         </div>
         <div className="dept-card">
-          <img src="https://picsum.photos/seed/shms-general-medicine/400/250" alt="General Medicine" />
+          <img
+            src="https://commons.wikimedia.org/wiki/Special:FilePath/Hospital_room_ubt.jpeg"
+            alt="General Medicine"
+          />
           <h4>General Medicine</h4>
         </div>
         <div className="dept-card">
-          <img src="https://picsum.photos/seed/shms-orthopedics/400/250" alt="Orthopedics" />
+          <img
+            src="https://commons.wikimedia.org/wiki/Special:FilePath/X_ray_internal_fixation_leg_fracture.jpg"
+            alt="Orthopedics"
+          />
           <h4>Orthopedics</h4>
         </div>
         <div className="dept-card">
-          <img src="https://picsum.photos/seed/shms-pediatrics/400/250" alt="Pediatrics" />
+          <img
+            src="https://commons.wikimedia.org/wiki/Special:FilePath/Physical_exam_of_child_with_stethoscope_on_chest.jpeg"
+            alt="Pediatrics"
+          />
           <h4>Pediatrics</h4>
         </div>
         <div className="dept-card">
-          <img src="https://picsum.photos/seed/shms-dermatology/400/250" alt="Dermatology" />
+          <img
+            src="https://commons.wikimedia.org/wiki/Special:FilePath/How_to_Use_a_Carbon_dioxide_Fractional_Laser_in_the_Dermatology.jpg"
+            alt="Dermatology"
+          />
           <h4>Dermatology</h4>
         </div>
         <div className="dept-card">
-          <img src="https://picsum.photos/seed/shms-neurology/400/250" alt="Neurology" />
+          <img
+            src="https://commons.wikimedia.org/wiki/Special:FilePath/Brain_MRI.jpg"
+            alt="Neurology"
+          />
           <h4>Neurology</h4>
         </div>
       </div>

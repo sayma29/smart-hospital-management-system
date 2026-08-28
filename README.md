@@ -16,38 +16,46 @@ an admin dashboard — built with the MERN-style stack from the proposal
 - **Deployment target:** Vercel (frontend) + Render/Railway (backend) + MongoDB Atlas
 
 ## Folder Structure
-```
+
 hms/
-├── backend/          # Express REST API
-│   ├── config/       # DB connection
-│   ├── models/       # Mongoose schemas
-│   ├── middleware/   # JWT auth + role guard
-│   ├── routes/       # auth, doctors, patients, appointments, records, invoices, admin
-│   ├── server.js
-│   └── seed.js        # creates a demo admin + doctor + departments
-└── frontend/         # React (Vite) SPA
-    └── src/
-        ├── api/        # axios instance
-        ├── context/    # AuthContext (login/register/logout)
-        ├── components/ # Navbar, ProtectedRoute, Alert
-        └── pages/      # Home, Login, Register, Patient/Doctor/Admin dashboards
-```
+├── backend/ # Express REST API
+│ ├── config/ # DB connection
+│ ├── models/ # Mongoose schemas
+│ ├── middleware/ # JWT auth + role guard
+│ ├── routes/ # auth, doctors, patients, appointments, records, invoices, admin
+│ ├── server.js
+│ └── seed.js # creates demo accounts + sample departments/doctors/appointments
+└── frontend/ # React (Vite) SPA
+└── src/
+├── api/ # axios instance
+├── context/ # AuthContext (login/register/logout)
+├── components/ # Navbar (with dark mode toggle), Footer, ProtectedRoute, Alert
+└── pages/ # Home, Login, Register, Patient/Doctor/Admin/Receptionist dashboards, DoctorsBrowse
+
 
 ## Features implemented (matches the proposal)
 - Role-based auth: patient, doctor, admin, receptionist
 - Patient registration & profile (medical history, blood group, etc.)
+- Browse doctors by department with photo-style avatar cards
 - Appointment booking, rescheduling, cancelling; doctor confirms/completes
-- Doctor availability management (weekly schedule, fee, specialization)
-- Electronic Medical Records — doctor adds diagnosis/prescription/notes after a visit
-- Billing — invoice is auto-generated when a doctor marks a visit "completed";
-  patient can mark it paid (mock payment, matches the proposal's "not included:
-  real payment gateway integration")
-- Admin dashboard — manage doctors, departments, staff, view all appointments/
-  invoices, and see system stats (patients, doctors, revenue, pending appointments)
-- Receptionist/staff dashboard — register walk-in patients, book appointments
-  on behalf of a patient (phone/front-desk bookings), view all appointments
-
----
+- Doctor availability management (weekly schedule, fee, specialization) plus
+  a personal profile tab (name, phone, qualifications)
+- Electronic Medical Records — doctor adds diagnosis/prescription/notes after
+  a visit
+- Billing — invoice is auto-generated when a doctor marks a visit
+  "completed". Payment is a two-step confirmation flow: the patient marks an
+  invoice as paid, and the admin confirms (or reverts) the payment before it
+  counts as revenue — mock payment, matching the proposal's stated scope of
+  no real payment gateway integration
+- Admin dashboard — manage doctors, departments (full create/edit/delete),
+  staff (create/deactivate/reactivate), view all appointments, confirm or
+  revert invoice payments, and see system stats (patients, doctors, revenue,
+  pending appointments)
+- Receptionist/staff dashboard — register walk-in patients, book
+  appointments on behalf of a patient (phone/front-desk bookings), view all
+  appointments
+- Dark mode toggle, site footer with contact/address info, and a homepage
+  with department photo cards
 
 ## 1. Local Setup
 
@@ -63,15 +71,21 @@ npm install
 cp .env.example .env
 # edit .env and paste your MONGO_URI + a JWT_SECRET
 npm run dev          # starts on http://localhost:5000
-node seed.js          # optional: creates demo admin/doctor/departments
+node seed.js          # creates demo accounts + sample doctors/patients/appointments/invoices
 ```
 
 Demo accounts created by `seed.js`:
-| Role   | Email             | Password   |
-|--------|-------------------|------------|
-| Admin        | admin@shms.com     | Admin@123      |
-| Doctor       | doctor@shms.com    | Doctor@123     |
-| Receptionist | reception@shms.com | Reception@123  |
+| Role         | Email                     | Password       |
+|--------------|----------------------------|-----------------|
+| Admin        | admin@shms.com             | Admin@123       |
+| Doctor       | doctor@shms.com            | Doctor@123      |
+| Receptionist | reception@shms.com         | Reception@123   |
+| Patient      | karim.patient@shms.com     | Patient@123     |
+
+`seed.js` also creates 5 additional doctors across Cardiology, Orthopedics,
+Pediatrics, Dermatology, and Neurology (all use password `Doctor@123`), plus
+sample completed/confirmed/pending appointments with medical records and
+invoices so the app has realistic data for a demo.
 
 ### Frontend
 ```bash
@@ -83,9 +97,7 @@ npm run dev           # starts on http://localhost:5173
 ```
 
 Open http://localhost:5173 — register a patient account, or log in with the
-demo admin/doctor accounts above.
-
----
+demo accounts above.
 
 ## 2. Push to GitHub
 ```bash
@@ -100,8 +112,6 @@ git push -u origin main
 Both `.env` files are already git-ignored — never commit real secrets.
 Two people on the team can each `git clone`, create a branch, and open pull
 requests into `main`.
-
----
 
 ## 3. Free Hosting (so you can demo it live to your teacher)
 
@@ -128,13 +138,22 @@ After both are live, run `node seed.js` once against your Atlas database
 (you can do this locally by pointing your local `.env`'s `MONGO_URI` at the
 Atlas cluster) so the demo accounts exist in production too.
 
----
+## 4. Payment Flow (how billing works)
+1. A doctor marks an appointment "completed" → an unpaid invoice is
+   auto-created.
+2. The patient goes to Invoices → clicks "Pay Now" → invoice status becomes
+   "Awaiting Confirmation".
+3. The admin goes to Invoices → clicks "Confirm Paid" → invoice becomes
+   "paid" and counts toward the revenue total on the Overview tab. Admin can
+   also click "Revert to Unpaid" to correct a mistake.
 
-## 4. Notes / Known Limitations (matches "Not Included" in the proposal)
-- No real insurance or payment gateway integration — invoice "payment" is a
-  mock status toggle, matching the proposal's stated scope.
+## 5. Notes / Known Limitations (matches "Not Included" in the proposal)
+- No real insurance or payment gateway integration — invoice payment is a
+  mock two-step confirmation between patient and admin, matching the
+  proposal's stated scope.
 - No native mobile app — the frontend is a responsive web app only.
 - No hardware/medical-device integration.
-- Optional/advanced features from the proposal (email/SMS reminders, online
-  payments, analytics charts, bed/ward tracker) are not built — they were
-  listed as "if time permits" and are good next steps once the MVP is graded.
+- Optional/advanced features from the proposal (email/SMS reminders,
+  automated online payments, analytics charts, bed/ward tracker) are not
+  built — they were listed as "if time permits" and are good next steps
+  once the MVP is graded.

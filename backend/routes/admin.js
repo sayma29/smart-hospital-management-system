@@ -88,7 +88,21 @@ router.post("/doctors", async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+router.put("/departments/:id", async (req, res) => {
+  try {
+    const { name, description } = req.body;
+    const department = await Department.findById(req.params.id);
+    if (!department) return res.status(404).json({ message: "Department not found" });
 
+    if (name !== undefined) department.name = name;
+    if (description !== undefined) department.description = description;
+
+    await department.save();
+    res.json(department);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 router.delete("/doctors/:id", async (req, res) => {
   try {
     const doctor = await Doctor.findById(req.params.id);

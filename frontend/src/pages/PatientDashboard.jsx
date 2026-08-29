@@ -3,18 +3,30 @@ import api from "../api/axios.js";
 import Alert from "../components/Alert.jsx";
 import DoctorsBrowse from "./DoctorsBrowse.jsx";
 
-const TABS = ["Browse Doctors", "Book Appointment", "My Appointments", "Medical Records", "Invoices", "Profile"];
+const TABS = [
+  { label: "Browse Doctors", icon: "🔍" },
+  { label: "Book Appointment", icon: "📅" },
+  { label: "My Appointments", icon: "🗂️" },
+  { label: "Medical Records", icon: "🩺" },
+  { label: "Invoices", icon: "💳" },
+  { label: "Medical Tests", icon: "🧪" },
+  { label: "Profile", icon: "👤" },
+];
 
 export default function PatientDashboard() {
-  const [tab, setTab] = useState(TABS[0]);
+  const [tab, setTab] = useState(TABS[0].label);
 
   return (
     <div className="dashboard">
       <h2>Patient Dashboard</h2>
       <div className="tabs">
-        {TABS.map((t) => (
-          <button key={t} className={`tab ${tab === t ? "active" : ""}`} onClick={() => setTab(t)}>
-            {t}
+        {TABS.map((t, i) => (
+          <button
+            key={t.label}
+            className={`tab tab-color-${i % 6} ${tab === t.label ? "active" : ""}`}
+            onClick={() => setTab(t.label)}
+          >
+            <span className="tab-icon">{t.icon}</span> {t.label}
           </button>
         ))}
       </div>
@@ -24,6 +36,7 @@ export default function PatientDashboard() {
         {tab === "My Appointments" && <MyAppointments />}
         {tab === "Medical Records" && <MedicalRecords />}
         {tab === "Invoices" && <Invoices />}
+        {tab === "Medical Tests" && <MedicalTests />}
         {tab === "Profile" && <Profile />}
       </div>
     </div>
@@ -98,29 +111,15 @@ function BookAppointment() {
         </div>
         <div>
           <label>Date</label>
-          <input
-            type="date"
-            value={form.date}
-            onChange={(e) => setForm({ ...form, date: e.target.value })}
-            required
-          />
+          <input type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} required />
         </div>
         <div>
           <label>Time</label>
-          <input
-            type="time"
-            value={form.time}
-            onChange={(e) => setForm({ ...form, time: e.target.value })}
-            required
-          />
+          <input type="time" value={form.time} onChange={(e) => setForm({ ...form, time: e.target.value })} required />
         </div>
         <div className="span-2">
           <label>Reason for visit</label>
-          <textarea
-            value={form.reason}
-            onChange={(e) => setForm({ ...form, reason: e.target.value })}
-            rows={3}
-          />
+          <textarea value={form.reason} onChange={(e) => setForm({ ...form, reason: e.target.value })} rows={3} />
         </div>
         <button className="btn btn-primary span-2" type="submit">
           Book Appointment
@@ -239,6 +238,8 @@ function MedicalRecords() {
 function Invoices() {
   const [invoices, setInvoices] = useState([]);
   const [error, setError] = useState("");
+  const [payModalFor, setPayModalFor] = useState(null);
+  const [cardForm, setCardForm] = useState({ name: "", number: "", expiry: "", cvv: "" });
 
   const load = () => api.get("/invoices/mine").then((res) => setInvoices(res.data));
 
@@ -246,10 +247,17 @@ function Invoices() {
     load();
   }, []);
 
-  const pay = async (id) => {
+  const openPayModal = (inv) => {
+    setPayModalFor(inv);
+    setCardForm({ name: "", number: "", expiry: "", cvv: "" });
+  };
+
+  const submitPayment = async (e) => {
+    e.preventDefault();
     setError("");
     try {
-      await api.put(`/invoices/${id}/pay`);
+      await api.put(`/invoices/${payModalFor._id}/pay`);
+      setPayModalFor(null);
       load();
     } catch (err) {
       setError(err.response?.data?.message || "Payment failed.");
@@ -283,14 +291,12 @@ function Invoices() {
               </td>
               <td>
                 {inv.status === "unpaid" && (
-                  <button className="btn-link" onClick={() => pay(inv._id)}>
+                  <button className="btn-link" onClick={() => openPayModal(inv)}>
                     Pay Now
                   </button>
                 )}
                 {inv.status === "pending_confirmation" && (
-                  <span style={{ fontSize: "0.8rem", color: "var(--muted)" }}>
-                    Waiting for admin to confirm
-                  </span>
+                  <span style={{ fontSize: "0.8rem", color: "var(--muted)" }}>Waiting for admin to confirm</span>
                 )}
               </td>
             </tr>
@@ -300,6 +306,105 @@ function Invoices() {
               <td colSpan={5}>No invoices yet.</td>
             </tr>
           )}
+        </tbody>
+      </table>
+
+      {payModalFor && (
+        <div className="modal-backdrop" onClick={() => setPayModalFor(null)}>
+          <form className="modal" onClick={(e) => e.stopPropagation()} onSubmit={submitPayment}>
+            <h3>Pay ৳{payModalFor.amount}</h3>
+            <p style={{ fontSize: "0.8rem", color: "var(--muted)" }}>
+              Sandbox payment gateway — no real card is charged, this is a demo checkout.
+            </p>
+            <label>Cardholder Name</label>
+            <input
+              value={cardForm.name}
+              onChange={(e) => setCardForm({ ...cardForm, name: e.target.value })}
+              placeholder="Name on card"
+              required
+            />
+            <label>Card Number</label>
+            <input
+              value={cardForm.number}
+              onChange={(e) => setCardForm({ ...cardForm, number: e.target.value })}
+              placeholder="4242 4242 4242 4242"
+              maxLength={19}
+              required
+            />
+            <div style={{ display: "flex", gap: "0.7rem" }}>
+              <div style={{ flex: 1 }}>
+                <label>Expiry</label>
+                <input
+                  value={cardForm.expiry}
+                  onChange={(e) => setCardForm({ ...cardForm, expiry: e.target.value })}
+                  placeholder="MM/YY"
+                  maxLength={5}
+                  required
+                />
+              </div>
+              <div style={{ flex: 1 }}>
+                <label>CVV</label>
+                <input
+                  value={cardForm.cvv}
+                  onChange={(e) => setCardForm({ ...cardForm, cvv: e.target.value })}
+                  placeholder="123"
+                  maxLength={3}
+                  required
+                />
+              </div>
+            </div>
+            <div className="modal-actions">
+              <button type="button" className="btn btn-secondary" onClick={() => setPayModalFor(null)}>
+                Cancel
+              </button>
+              <button type="submit" className="btn btn-primary">
+                Confirm Payment
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const TEST_CATALOG = [
+  { name: "Complete Blood Count (CBC)", category: "General Medicine", price: 400 },
+  { name: "Lipid Profile", category: "Cardiology", price: 900 },
+  { name: "ECG (Electrocardiogram)", category: "Cardiology", price: 600 },
+  { name: "X-Ray (Single View)", category: "Orthopedics", price: 500 },
+  { name: "MRI - Brain", category: "Neurology", price: 6500 },
+  { name: "Skin Allergy Panel", category: "Dermatology", price: 1200 },
+  { name: "Blood Sugar (Fasting & PP)", category: "General Medicine", price: 300 },
+  { name: "Child Growth Assessment", category: "Pediatrics", price: 500 },
+  { name: "Liver Function Test (LFT)", category: "General Medicine", price: 800 },
+  { name: "Kidney Function Test (KFT)", category: "General Medicine", price: 800 },
+];
+
+function MedicalTests() {
+  return (
+    <div className="card">
+      <h3>Available Medical Tests</h3>
+      <p style={{ color: "var(--muted)", fontSize: "0.9rem" }}>
+        Informational price list — ask your doctor or the front desk to schedule any of these tests
+        during your visit.
+      </p>
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Test Name</th>
+            <th>Related Department</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          {TEST_CATALOG.map((t) => (
+            <tr key={t.name}>
+              <td>{t.name}</td>
+              <td>{t.category}</td>
+              <td>৳{t.price}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
@@ -320,14 +425,7 @@ function Profile() {
     e.preventDefault();
     setMessage("");
     const { dateOfBirth, gender, bloodGroup, address, emergencyContact, medicalHistory } = profile;
-    await api.put("/patients/me", {
-      dateOfBirth,
-      gender,
-      bloodGroup,
-      address,
-      emergencyContact,
-      medicalHistory,
-    });
+    await api.put("/patients/me", { dateOfBirth, gender, bloodGroup, address, emergencyContact, medicalHistory });
     setMessage("Profile updated.");
   };
 
@@ -369,11 +467,7 @@ function Profile() {
         </div>
         <div>
           <label>Emergency Contact</label>
-          <input
-            name="emergencyContact"
-            value={profile.emergencyContact || ""}
-            onChange={handleChange}
-          />
+          <input name="emergencyContact" value={profile.emergencyContact || ""} onChange={handleChange} />
         </div>
         <div className="span-2">
           <label>Address</label>
@@ -381,12 +475,7 @@ function Profile() {
         </div>
         <div className="span-2">
           <label>Medical History</label>
-          <textarea
-            name="medicalHistory"
-            rows={3}
-            value={profile.medicalHistory || ""}
-            onChange={handleChange}
-          />
+          <textarea name="medicalHistory" rows={3} value={profile.medicalHistory || ""} onChange={handleChange} />
         </div>
         <button className="btn btn-primary span-2" type="submit">
           Save Profile

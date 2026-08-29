@@ -2,23 +2,36 @@ import React, { useEffect, useState } from "react";
 import api from "../api/axios.js";
 import Alert from "../components/Alert.jsx";
 
-const TABS = ["Overview", "Doctors", "Departments", "Staff", "Appointments", "Invoices"];
+const TABS = [
+  { label: "Overview", icon: "📊" },
+  { label: "Analytics", icon: "📈" },
+  { label: "Doctors", icon: "🩺" },
+  { label: "Departments", icon: "🏬" },
+  { label: "Staff", icon: "🧑‍💼" },
+  { label: "Appointments", icon: "🗂️" },
+  { label: "Invoices", icon: "💳" },
+];
 
 export default function AdminDashboard() {
-  const [tab, setTab] = useState(TABS[0]);
+  const [tab, setTab] = useState(TABS[0].label);
 
   return (
     <div className="dashboard">
       <h2>Admin Dashboard</h2>
       <div className="tabs">
-        {TABS.map((t) => (
-          <button key={t} className={`tab ${tab === t ? "active" : ""}`} onClick={() => setTab(t)}>
-            {t}
+        {TABS.map((t, i) => (
+          <button
+            key={t.label}
+            className={`tab tab-color-${i % 6} ${tab === t.label ? "active" : ""}`}
+            onClick={() => setTab(t.label)}
+          >
+            <span className="tab-icon">{t.icon}</span> {t.label}
           </button>
         ))}
       </div>
       <div className="tab-content">
         {tab === "Overview" && <Overview />}
+        {tab === "Analytics" && <Analytics />}
         {tab === "Doctors" && <ManageDoctors />}
         {tab === "Departments" && <ManageDepartments />}
         {tab === "Staff" && <ManageStaff />}
@@ -41,24 +54,100 @@ function Overview() {
   return (
     <div className="stats-grid">
       <div className="stat-card">
-        <h4>Total Patients</h4>
+        <h4>👥 Total Patients</h4>
         <p>{stats.totalPatients}</p>
       </div>
       <div className="stat-card">
-        <h4>Total Doctors</h4>
+        <h4>🩺 Total Doctors</h4>
         <p>{stats.totalDoctors}</p>
       </div>
       <div className="stat-card">
-        <h4>Total Appointments</h4>
+        <h4>🗂️ Total Appointments</h4>
         <p>{stats.totalAppointments}</p>
       </div>
       <div className="stat-card">
-        <h4>Pending Appointments</h4>
+        <h4>⏳ Pending Appointments</h4>
         <p>{stats.pendingAppointments}</p>
       </div>
       <div className="stat-card">
-        <h4>Revenue Collected</h4>
+        <h4>💰 Revenue Collected</h4>
         <p>৳{stats.totalRevenue}</p>
+      </div>
+    </div>
+  );
+}
+
+function Analytics() {
+  const [appointments, setAppointments] = useState([]);
+  const [invoices, setInvoices] = useState([]);
+
+  useEffect(() => {
+    api.get("/appointments").then((res) => setAppointments(res.data));
+    api.get("/invoices").then((res) => setInvoices(res.data));
+  }, []);
+
+  const apptByDept = {};
+  appointments.forEach((a) => {
+    apptByDept[a.department] = (apptByDept[a.department] || 0) + 1;
+  });
+  const apptEntries = Object.entries(apptByDept).sort((a, b) => b[1] - a[1]);
+  const maxAppt = Math.max(1, ...apptEntries.map((e) => e[1]));
+
+  const revByDept = {};
+  invoices
+    .filter((i) => i.status === "paid")
+    .forEach((i) => {
+      const dept = i.doctor?.department || "Unknown";
+      revByDept[dept] = (revByDept[dept] || 0) + i.amount;
+    });
+  const revEntries = Object.entries(revByDept).sort((a, b) => b[1] - a[1]);
+  const maxRev = Math.max(1, ...revEntries.map((e) => e[1]));
+
+  const statusCounts = {};
+  appointments.forEach((a) => {
+    statusCounts[a.status] = (statusCounts[a.status] || 0) + 1;
+  });
+
+  return (
+    <div>
+      <div className="card">
+        <h3>Appointments by Department</h3>
+        {apptEntries.map(([dept, count]) => (
+          <div key={dept} className="bar-row">
+            <span className="bar-label">{dept}</span>
+            <div className="bar-track">
+              <div className="bar-fill" style={{ width: `${(count / maxAppt) * 100}%` }}></div>
+            </div>
+            <span className="bar-value">{count}</span>
+          </div>
+        ))}
+        {apptEntries.length === 0 && <p>No appointment data yet.</p>}
+      </div>
+
+      <div className="card">
+        <h3>Revenue by Department (paid invoices)</h3>
+        {revEntries.map(([dept, amount]) => (
+          <div key={dept} className="bar-row">
+            <span className="bar-label">{dept}</span>
+            <div className="bar-track">
+              <div className="bar-fill bar-fill-green" style={{ width: `${(amount / maxRev) * 100}%` }}></div>
+            </div>
+            <span className="bar-value">৳{amount}</span>
+          </div>
+        ))}
+        {revEntries.length === 0 && <p>No revenue data yet.</p>}
+      </div>
+
+      <div className="card">
+        <h3>Appointment Status Breakdown</h3>
+        <div className="status-chip-grid">
+          {Object.entries(statusCounts).map(([status, count]) => (
+            <div key={status} className={`status-chip badge-${status}`}>
+              {status}: {count}
+            </div>
+          ))}
+          {Object.keys(statusCounts).length === 0 && <p>No appointments yet.</p>}
+        </div>
       </div>
     </div>
   );
@@ -521,6 +610,29 @@ function AllInvoices() {
     }
   };
 
+  const printInvoice = (inv) => {
+    const win = window.open("", "_blank");
+    win.document.write(`
+      <html>
+        <head><title>Invoice</title></head>
+        <body style="font-family: Arial, sans-serif; padding: 40px;">
+          <h2>MediCare+ — Invoice Receipt</h2>
+          <hr />
+          <p><strong>Patient:</strong> ${inv.patient?.name || ""}</p>
+          <p><strong>Doctor:</strong> ${inv.doctor?.user?.name || ""}</p>
+          <p><strong>Description:</strong> ${inv.description}</p>
+          <p><strong>Amount:</strong> ৳${inv.amount}</p>
+          <p><strong>Status:</strong> ${inv.status}</p>
+          <p><strong>Date:</strong> ${new Date(inv.createdAt).toLocaleDateString()}</p>
+          <hr />
+          <p style="font-size: 12px; color: #666;">This is a system-generated receipt from MediCare+.</p>
+        </body>
+      </html>
+    `);
+    win.document.close();
+    win.print();
+  };
+
   const statusLabel = (status) => (status === "pending_confirmation" ? "Awaiting Confirmation" : status);
 
   return (
@@ -557,6 +669,9 @@ function AllInvoices() {
                     Revert to Unpaid
                   </button>
                 )}
+                <button className="btn-link" onClick={() => printInvoice(inv)}>
+                  🖨️ Print
+                </button>
               </td>
             </tr>
           ))}

@@ -5,7 +5,7 @@ export default function Footer() {
     <footer className="site-footer">
       <div className="footer-grid">
         <div>
-          <h4>Smart Hospital Management System</h4>
+          <h4>MediCare+</h4>
           <p>Metropolitan University, Sylhet</p>
         </div>
         <div>

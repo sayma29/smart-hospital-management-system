@@ -10,6 +10,7 @@ import PatientDashboard from "./pages/PatientDashboard.jsx";
 import DoctorDashboard from "./pages/DoctorDashboard.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import ReceptionistDashboard from "./pages/ReceptionistDashboard.jsx";
+import DepartmentDetail from "./pages/DepartmentDetail.jsx";
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/departments/:name" element={<DepartmentDetail />} />
           <Route
             path="/patient"
             element={

@@ -736,3 +736,227 @@ body.dark .btn-secondary {
 body.dark .site-footer {
   background: #050d0c;
 }
+/* Search input */
+.search-input {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+/* Colorful tab icons */
+.tab-icon {
+  margin-right: 0.3rem;
+}
+
+.tab-color-0.active { color: #0f766e; border-color: #0f766e; }
+.tab-color-1.active { color: #7c3aed; border-color: #7c3aed; }
+.tab-color-2.active { color: #db2777; border-color: #db2777; }
+.tab-color-3.active { color: #ea580c; border-color: #ea580c; }
+.tab-color-4.active { color: #0284c7; border-color: #0284c7; }
+.tab-color-5.active { color: #16a34a; border-color: #16a34a; }
+
+/* Clickable department cards on homepage */
+.dept-card-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.dept-view-link {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 0.6rem;
+}
+
+/* Pulse loading screen on login */
+.pulse-loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 1rem;
+  gap: 1rem;
+}
+
+.pulse-circle {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0f766e, #14b8a6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  animation: pulse-beat 1.2s ease-in-out infinite;
+  box-shadow: 0 0 0 rgba(15, 118, 110, 0.5);
+}
+
+@keyframes pulse-beat {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(15, 118, 110, 0.5);
+  }
+  70% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 20px rgba(15, 118, 110, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(15, 118, 110, 0);
+  }
+}
+
+.pulse-loading-screen p {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+body.dark .pulse-loading-screen p {
+  color: #94a3b8;
+}
+/* Notification bell */
+.notification-wrap {
+  position: relative;
+}
+
+.notification-bell {
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: white;
+  font-size: 1.1rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #dc2626;
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 999px;
+  min-width: 16px;
+  text-align: center;
+}
+
+.notification-dropdown {
+  position: absolute;
+  right: 0;
+  top: 130%;
+  width: 300px;
+  max-height: 360px;
+  overflow-y: auto;
+  background: white;
+  color: var(--text);
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+}
+
+.notification-header {
+  padding: 0.8rem 1rem;
+  font-weight: 700;
+  border-bottom: 1px solid var(--border);
+  color: var(--primary);
+}
+
+.notification-empty {
+  padding: 1rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.notification-item {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.85rem;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-icon {
+  flex-shrink: 0;
+}
+
+body.dark .notification-dropdown {
+  background: #1e293b;
+  color: #e2e8f0;
+}
+
+body.dark .notification-item,
+body.dark .notification-header {
+  border-color: #334155;
+}
+/* Analytics bar charts */
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 0.7rem;
+}
+
+.bar-label {
+  width: 150px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.bar-track {
+  flex: 1;
+  background: var(--secondary);
+  border-radius: 6px;
+  height: 20px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0f766e, #14b8a6);
+  border-radius: 6px;
+  transition: width 0.5s ease;
+}
+
+.bar-fill-green {
+  background: linear-gradient(90deg, #16a34a, #4ade80);
+}
+
+.bar-value {
+  width: 80px;
+  text-align: right;
+  font-size: 0.85rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.status-chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.status-chip {
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: capitalize;
+}
+
+body.dark .bar-track {
+  background: #334155;
+}

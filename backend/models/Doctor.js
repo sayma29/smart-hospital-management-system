@@ -7,8 +7,8 @@ const availabilitySchema = new mongoose.Schema(
       enum: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
       required: true,
     },
-    startTime: { type: String, required: true }, // "09:00"
-    endTime: { type: String, required: true }, // "17:00"
+    startTime: { type: String, required: true },
+    endTime: { type: String, required: true },
   },
   { _id: false }
 );
@@ -20,6 +20,7 @@ const doctorSchema = new mongoose.Schema(
     specialization: { type: String, default: "" },
     qualifications: { type: String, default: "" },
     consultationFee: { type: Number, default: 500 },
+    photoUrl: { type: String, default: "" },
     availability: [availabilitySchema],
   },
   { timestamps: true }

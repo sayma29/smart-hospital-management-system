@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
+import NotificationBell from "./NotificationBell.jsx";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -25,17 +26,14 @@ export default function Navbar() {
   return (
     <nav className="navbar">
       <Link to="/" className="brand">
-        <span className="brand-main">🏥 SHMS</span>
+        <span className="brand-main">🏥 MediCare+</span>
         <span className="brand-sub">Smart Hospital Management System</span>
       </Link>
       <div className="nav-links">
-        <button
-          className="theme-toggle"
-          onClick={() => setDarkMode(!darkMode)}
-          title="Toggle dark mode"
-        >
+        <button className="theme-toggle" onClick={() => setDarkMode(!darkMode)} title="Toggle dark mode">
           {darkMode ? "☀️ Light" : "🌙 Dark"}
         </button>
+        {user && <NotificationBell />}
         {!user && (
           <>
             <Link to="/login">Login</Link>

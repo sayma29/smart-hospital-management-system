@@ -8,6 +8,7 @@ export default function DoctorsBrowse() {
   const [departments, setDepartments] = useState([]);
   const [activeDept, setActiveDept] = useState("All");
   const [doctors, setDoctors] = useState([]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     api.get("/departments").then((res) => setDepartments(res.data));
@@ -18,14 +19,27 @@ export default function DoctorsBrowse() {
     api.get(url).then((res) => setDoctors(res.data));
   }, [activeDept]);
 
+  const filteredDoctors = doctors.filter((doc) => {
+    const term = search.toLowerCase();
+    return (
+      doc.user?.name?.toLowerCase().includes(term) ||
+      doc.specialization?.toLowerCase().includes(term) ||
+      doc.department?.toLowerCase().includes(term)
+    );
+  });
+
   return (
     <div className="card">
       <h3>Browse Doctors by Department</h3>
+      <input
+        type="text"
+        placeholder="Search by doctor name or specialization..."
+        className="search-input"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
       <div className="tabs" style={{ marginBottom: "1rem" }}>
-        <button
-          className={`tab ${activeDept === "All" ? "active" : ""}`}
-          onClick={() => setActiveDept("All")}
-        >
+        <button className={`tab ${activeDept === "All" ? "active" : ""}`} onClick={() => setActiveDept("All")}>
           All
         </button>
         {departments.map((d) => (
@@ -40,9 +54,9 @@ export default function DoctorsBrowse() {
       </div>
 
       <div className="doctor-grid">
-        {doctors.map((doc) => (
+        {filteredDoctors.map((doc) => (
           <div key={doc._id} className="doctor-card">
-            <img src={avatarUrl(doc.user?.name || "Doctor")} alt={doc.user?.name} />
+            <img src={doc.photoUrl || avatarUrl(doc.user?.name || "Doctor")} alt={doc.user?.name} />
             <h4>{doc.user?.name}</h4>
             <p className="doctor-specialization">{doc.specialization || doc.department}</p>
             <p className="doctor-department">{doc.department}</p>
@@ -50,7 +64,7 @@ export default function DoctorsBrowse() {
             <p className="doctor-fee">Consultation fee: ৳{doc.consultationFee}</p>
           </div>
         ))}
-        {doctors.length === 0 && <p>No doctors found in this department yet.</p>}
+        {filteredDoctors.length === 0 && <p>No doctors found matching your search.</p>}
       </div>
     </div>
   );

@@ -2,6 +2,15 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 
+const departments = [
+  { name: "Cardiology", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Wireless_ECG_Monitor.jpg" },
+  { name: "General Medicine", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Hospital_room_ubt.jpeg" },
+  { name: "Orthopedics", img: "https://commons.wikimedia.org/wiki/Special:FilePath/X_ray_internal_fixation_leg_fracture.jpg" },
+  { name: "Pediatrics", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Physical_exam_of_child_with_stethoscope_on_chest.jpeg" },
+  { name: "Dermatology", img: "https://commons.wikimedia.org/wiki/Special:FilePath/How_to_Use_a_Carbon_dioxide_Fractional_Laser_in_the_Dermatology.jpg" },
+  { name: "Neurology", img: "https://commons.wikimedia.org/wiki/Special:FilePath/Brain_MRI.jpg" },
+];
+
 export default function Home() {
   const { user } = useAuth();
 
@@ -9,11 +18,11 @@ export default function Home() {
     <div className="hero">
       <div className="marquee-wrap">
         <div className="marquee-text">
-          Welcome to Smart Hospital Management System — Book Appointments — Meet Our Doctors — Access Your Medical Records — Manage Billing Online — Welcome to Smart Hospital Management System — Book Appointments — Meet Our Doctors — Access Your Medical Records — Manage Billing Online —
+          Welcome to MediCare+ — Book Appointments — Meet Our Doctors — Access Your Medical Records — Manage Billing Online — Welcome to MediCare+ — Book Appointments — Meet Our Doctors — Access Your Medical Records — Manage Billing Online —
         </div>
       </div>
 
-      <h1>Smart Hospital Management System</h1>
+      <h1>MediCare+</h1>
       <p>
         A centralized platform for patient registration, appointment booking, doctor
         scheduling, electronic medical records, and billing — built to replace manual,
@@ -57,49 +66,19 @@ export default function Home() {
       </div>
 
       <h2 className="section-title">Our Departments</h2>
+      <p style={{ textAlign: "center", color: "var(--muted)", marginTop: "-0.5rem" }}>
+        Click a department to see all our doctors
+      </p>
       <div className="dept-grid">
-        <div className="dept-card">
-          <img
-            src="https://commons.wikimedia.org/wiki/Special:FilePath/Wireless_ECG_Monitor.jpg"
-            alt="Cardiology"
-          />
-          <h4>Cardiology</h4>
-        </div>
-        <div className="dept-card">
-          <img
-            src="https://commons.wikimedia.org/wiki/Special:FilePath/Hospital_room_ubt.jpeg"
-            alt="General Medicine"
-          />
-          <h4>General Medicine</h4>
-        </div>
-        <div className="dept-card">
-          <img
-            src="https://commons.wikimedia.org/wiki/Special:FilePath/X_ray_internal_fixation_leg_fracture.jpg"
-            alt="Orthopedics"
-          />
-          <h4>Orthopedics</h4>
-        </div>
-        <div className="dept-card">
-          <img
-            src="https://commons.wikimedia.org/wiki/Special:FilePath/Physical_exam_of_child_with_stethoscope_on_chest.jpeg"
-            alt="Pediatrics"
-          />
-          <h4>Pediatrics</h4>
-        </div>
-        <div className="dept-card">
-          <img
-            src="https://commons.wikimedia.org/wiki/Special:FilePath/How_to_Use_a_Carbon_dioxide_Fractional_Laser_in_the_Dermatology.jpg"
-            alt="Dermatology"
-          />
-          <h4>Dermatology</h4>
-        </div>
-        <div className="dept-card">
-          <img
-            src="https://commons.wikimedia.org/wiki/Special:FilePath/Brain_MRI.jpg"
-            alt="Neurology"
-          />
-          <h4>Neurology</h4>
-        </div>
+        {departments.map((dept) => (
+          <Link key={dept.name} to={`/departments/${encodeURIComponent(dept.name)}`} className="dept-card-link">
+            <div className="dept-card">
+              <img src={dept.img} alt={dept.name} />
+              <h4>{dept.name}</h4>
+              <span className="dept-view-link">View Doctors →</span>
+            </div>
+          </Link>
+        ))}
       </div>
     </div>
   );

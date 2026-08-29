@@ -24,10 +24,18 @@ export default function Login() {
       else navigate("/patient");
     } catch (err) {
       setError(err.response?.data?.message || "Login failed. Please try again.");
-    } finally {
       setSubmitting(false);
     }
   };
+
+  if (submitting) {
+    return (
+      <div className="pulse-loading-screen">
+        <div className="pulse-circle">🏥</div>
+        <p>Logging you in...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="auth-page">
@@ -37,22 +45,15 @@ export default function Login() {
         <label>Email</label>
         <input name="email" type="email" value={form.email} onChange={handleChange} required />
         <label>Password</label>
-        <input
-          name="password"
-          type="password"
-          value={form.password}
-          onChange={handleChange}
-          required
-        />
-        <button className="btn btn-primary" type="submit" disabled={submitting}>
-          {submitting ? "Logging in..." : "Login"}
+        <input name="password" type="password" value={form.password} onChange={handleChange} required />
+        <button className="btn btn-primary" type="submit">
+          Login
         </button>
         <p className="auth-switch">
           No account? <Link to="/register">Register</Link>
         </p>
         <p className="auth-hint">
-          Demo admin: admin@shms.com / Admin@123 &nbsp;|&nbsp; Demo doctor: doctor@shms.com /
-          Doctor@123
+          Demo admin: admin@shms.com / Admin@123 &nbsp;|&nbsp; Demo doctor: doctor@shms.com / Doctor@123
         </p>
       </form>
     </div>

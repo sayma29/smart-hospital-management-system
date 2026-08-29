@@ -2,19 +2,27 @@ import React, { useEffect, useState } from "react";
 import api from "../api/axios.js";
 import Alert from "../components/Alert.jsx";
 
-const TABS = ["My Schedule", "Availability", "My Profile"];
+const TABS = [
+  { label: "My Schedule", icon: "📋" },
+  { label: "Availability", icon: "🗓️" },
+  { label: "My Profile", icon: "👤" },
+];
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 export default function DoctorDashboard() {
-  const [tab, setTab] = useState(TABS[0]);
+  const [tab, setTab] = useState(TABS[0].label);
 
   return (
     <div className="dashboard">
       <h2>Doctor Dashboard</h2>
       <div className="tabs">
-        {TABS.map((t) => (
-          <button key={t} className={`tab ${tab === t ? "active" : ""}`} onClick={() => setTab(t)}>
-            {t}
+        {TABS.map((t, i) => (
+          <button
+            key={t.label}
+            className={`tab tab-color-${i % 6} ${tab === t.label ? "active" : ""}`}
+            onClick={() => setTab(t.label)}
+          >
+            <span className="tab-icon">{t.icon}</span> {t.label}
           </button>
         ))}
       </div>

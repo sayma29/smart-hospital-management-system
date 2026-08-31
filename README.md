@@ -1,159 +1,109 @@
-# Smart Hospital Management System (SHMS)
+# MediCare+ (Smart Hospital Management System)
 
-Full-stack MVP built for the *Web Programming Lab (CSE 323)* project proposal —
-**PulseCode** (Sayma Rahman, MD Salman).
+Full-stack hospital management platform built for the Web Programming Lab (CSE 323) project — Team PulseCode (Sayma Rahman, MD Salman).
 
-A centralized web platform for patient registration, appointment booking,
-doctor scheduling, electronic medical records (EMR), billing/invoicing, and
-an admin dashboard — built with the MERN-style stack from the proposal
-(React, Node.js/Express, MongoDB), using JWT-based role authentication.
+MediCare+ is a centralized web platform for patient registration, appointment booking, doctor scheduling, electronic medical records (EMR), billing/invoicing, and admin management — built with the MERN stack (React, Node.js/Express, MongoDB) using JWT-based role authentication.
+
+## Live Demo
+
+Frontend: https://smart-hospital-management-system-mu.vercel.app
+
+Backend API: https://smart-hospital-management-system-6nex.onrender.com
 
 ## Tech Stack
-- **Frontend:** React 18 (Vite), React Router, Axios
-- **Backend:** Node.js, Express.js
-- **Database:** MongoDB (Mongoose)
-- **Auth:** JWT + bcrypt password hashing, role-based access control
-- **Deployment target:** Vercel (frontend) + Render/Railway (backend) + MongoDB Atlas
+
+- Frontend: React 18 (Vite), React Router, Axios
+- Backend: Node.js, Express.js
+- Database: MongoDB (Mongoose)
+- Auth: JWT + bcrypt password hashing, role-based access control
+- Deployment: Vercel (frontend), Render (backend), MongoDB Atlas (database)
 
 ## Folder Structure
-
 hms/
-├── backend/ # Express REST API
-│ ├── config/ # DB connection
-│ ├── models/ # Mongoose schemas
-│ ├── middleware/ # JWT auth + role guard
-│ ├── routes/ # auth, doctors, patients, appointments, records, invoices, admin
+├── backend/
+│ ├── config/
+│ ├── models/
+│ ├── middleware/
+│ ├── routes/
 │ ├── server.js
-│ └── seed.js # creates demo accounts + sample departments/doctors/appointments
-└── frontend/ # React (Vite) SPA
+│ └── seed.js
+└── frontend/
 └── src/
-├── api/ # axios instance
-├── context/ # AuthContext (login/register/logout)
-├── components/ # Navbar (with dark mode toggle), Footer, ProtectedRoute, Alert
-└── pages/ # Home, Login, Register, Patient/Doctor/Admin/Receptionist dashboards, DoctorsBrowse
+├── api/
+├── context/
+├── components/
+└── pages/
 
+## Features
 
-## Features implemented (matches the proposal)
-- Role-based auth: patient, doctor, admin, receptionist
-- Patient registration & profile (medical history, blood group, etc.)
-- Browse doctors by department with photo-style avatar cards
-- Appointment booking, rescheduling, cancelling; doctor confirms/completes
-- Doctor availability management (weekly schedule, fee, specialization) plus
-  a personal profile tab (name, phone, qualifications)
-- Electronic Medical Records — doctor adds diagnosis/prescription/notes after
-  a visit
-- Billing — invoice is auto-generated when a doctor marks a visit
-  "completed". Payment is a two-step confirmation flow: the patient marks an
-  invoice as paid, and the admin confirms (or reverts) the payment before it
-  counts as revenue — mock payment, matching the proposal's stated scope of
-  no real payment gateway integration
-- Admin dashboard — manage doctors, departments (full create/edit/delete),
-  staff (create/deactivate/reactivate), view all appointments, confirm or
-  revert invoice payments, and see system stats (patients, doctors, revenue,
-  pending appointments)
-- Receptionist/staff dashboard — register walk-in patients, book
-  appointments on behalf of a patient (phone/front-desk bookings), view all
-  appointments
-- Dark mode toggle, site footer with contact/address info, and a homepage
-  with department photo cards
+- Role-based authentication for four account types: patient, doctor, admin, receptionist
+- Patient registration and profile management, including medical history and blood group
+- Browse 60+ doctors across six departments with photos, specializations, and consultation fees
+- Search and filter doctors by name, specialization, or department
+- Public department pages accessible from the homepage
+- Appointment booking, rescheduling, and cancellation, with doctor confirmation and completion
+- Doctor availability management with weekly schedule, fee, and specialization settings
+- Doctor profile editing for name, phone, and qualifications
+- Electronic Medical Records with diagnosis, prescription, and notes added after each visit
+- Automatic invoice generation when an appointment is marked completed
+- Sandbox payment gateway checkout for patients, with admin confirmation before payment counts as revenue
+- Admin dashboard with full create, edit, and delete control over doctors, departments, and staff
+- Live analytics dashboard showing appointments and revenue by department
+- Printable invoice receipts
+- Receptionist dashboard for registering walk-in patients and booking appointments on their behalf
+- Real-time notifications for appointment requests, confirmations, and pending payments
+- Dark and light mode toggle
+- Medical tests information section with pricing
 
-## 1. Local Setup
+## Local Setup
 
 ### Prerequisites
+
 - Node.js 18+
-- A MongoDB connection string (use a free [MongoDB Atlas](https://www.mongodb.com/atlas) cluster,
-  or run MongoDB locally)
+- A MongoDB connection string (MongoDB Atlas free tier or local MongoDB)
 
 ### Backend
-```bash
 cd backend
 npm install
 cp .env.example .env
-# edit .env and paste your MONGO_URI + a JWT_SECRET
-npm run dev          # starts on http://localhost:5000
-node seed.js          # creates demo accounts + sample doctors/patients/appointments/invoices
-```
+npm run dev
+node seed.js
 
-Demo accounts created by `seed.js`:
-| Role         | Email                     | Password       |
-|--------------|----------------------------|-----------------|
-| Admin        | admin@shms.com             | Admin@123       |
-| Doctor       | doctor@shms.com            | Doctor@123      |
-| Receptionist | reception@shms.com         | Reception@123   |
-| Patient      | karim.patient@shms.com     | Patient@123     |
+Edit the `.env` file with your own `MONGO_URI` and `JWT_SECRET` before running.
 
-`seed.js` also creates 5 additional doctors across Cardiology, Orthopedics,
-Pediatrics, Dermatology, and Neurology (all use password `Doctor@123`), plus
-sample completed/confirmed/pending appointments with medical records and
-invoices so the app has realistic data for a demo.
+Demo accounts created by seed.js:
+
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | admin@shms.com | Admin@123 |
+| Doctor | doctor@shms.com | Doctor@123 |
+| Receptionist | reception@shms.com | Reception@123 |
+| Patient | karim.patient@shms.com | Patient@123 |
 
 ### Frontend
-```bash
 cd frontend
 npm install
 cp .env.example .env
-# VITE_API_URL should point at your backend, e.g. http://localhost:5000/api
-npm run dev           # starts on http://localhost:5173
-```
+npm run dev
 
-Open http://localhost:5173 — register a patient account, or log in with the
-demo accounts above.
+Open http://localhost:5173 to view the app locally.
 
-## 2. Push to GitHub
-```bash
-cd hms
-git init
-git add .
-git commit -m "Initial commit: Smart Hospital Management System"
-git branch -M main
-git remote add origin https://github.com/<your-username>/<your-repo>.git
-git push -u origin main
-```
-Both `.env` files are already git-ignored — never commit real secrets.
-Two people on the team can each `git clone`, create a branch, and open pull
-requests into `main`.
+## Deployment
 
-## 3. Free Hosting (so you can demo it live to your teacher)
+The backend is deployed on Render with environment variables for `MONGO_URI`, `JWT_SECRET`, `JWT_EXPIRES_IN`, and `CLIENT_URL`. The frontend is deployed on Vercel with the `VITE_API_URL` environment variable pointing to the Render backend. The database runs on MongoDB Atlas.
 
-**Database — MongoDB Atlas (free tier)**
-1. Create a free cluster at mongodb.com/atlas.
-2. Add a database user + password, and allow access from anywhere (0.0.0.0/0)
-   for the demo.
-3. Copy the connection string into `MONGO_URI`.
+## Payment Flow
 
-**Backend — Render.com (free tier)**
-1. New "Web Service" → connect your GitHub repo → set root directory to `backend`.
-2. Build command: `npm install` — Start command: `npm start`.
-3. Add environment variables: `MONGO_URI`, `JWT_SECRET`, `JWT_EXPIRES_IN`,
-   `CLIENT_URL` (your Vercel frontend URL once deployed).
-4. Deploy — note the resulting URL, e.g. `https://shms-backend.onrender.com`.
+An unpaid invoice is created automatically when a doctor marks an appointment as completed. The patient can then pay through the sandbox checkout, which sets the invoice to an awaiting confirmation state. An admin reviews and confirms the payment before it is marked as paid and counted toward revenue.
 
-**Frontend — Vercel**
-1. Import the same GitHub repo → set root directory to `frontend`.
-2. Framework preset: Vite.
-3. Environment variable: `VITE_API_URL = https://shms-backend.onrender.com/api`.
-4. Deploy — Vercel gives you a live URL to show your teacher.
+## Team
 
-After both are live, run `node seed.js` once against your Atlas database
-(you can do this locally by pointing your local `.env`'s `MONGO_URI` at the
-Atlas cluster) so the demo accounts exist in production too.
+Sayma Rahman — ID 232-115-100
 
-## 4. Payment Flow (how billing works)
-1. A doctor marks an appointment "completed" → an unpaid invoice is
-   auto-created.
-2. The patient goes to Invoices → clicks "Pay Now" → invoice status becomes
-   "Awaiting Confirmation".
-3. The admin goes to Invoices → clicks "Confirm Paid" → invoice becomes
-   "paid" and counts toward the revenue total on the Overview tab. Admin can
-   also click "Revert to Unpaid" to correct a mistake.
+MD Salman — ID 232-115-283
 
-## 5. Notes / Known Limitations (matches "Not Included" in the proposal)
-- No real insurance or payment gateway integration — invoice payment is a
-  mock two-step confirmation between patient and admin, matching the
-  proposal's stated scope.
-- No native mobile app — the frontend is a responsive web app only.
-- No hardware/medical-device integration.
-- Optional/advanced features from the proposal (email/SMS reminders,
-  automated online payments, analytics charts, bed/ward tracker) are not
-  built — they were listed as "if time permits" and are good next steps
-  once the MVP is graded.
+Web Programming Lab, CSE 323, Metropolitan University, Sylhet
+
+## Known Limitations
+
+No real payment gateway integration, matching the original project scope of a sandbox checkout. No native mobile app. No hardware or medical device integration. No automated SMS or email reminders.
